@@ -1,0 +1,98 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.11'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
+//    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+}
+
+group = 'au.com.transport'
+version = '0.0.1-SNAPSHOT'
+description = 'tapngo'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Core
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // Database
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // JSON handling for JSONB columns
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.9.0'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // OpenAPI Documentation
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:postgresql"
+}
+
+springBoot {
+    buildInfo()
+}
+
+tasks.named('bootBuildInfo') {
+    enabled = true
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        csv.required.set(false)
+        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.12"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+//dependencies {
+//    implementation 'org.springframework.boot:spring-boot-starter'
+//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+//}
+//
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}
