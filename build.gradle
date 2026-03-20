@@ -26,6 +26,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // --- Messaging ---
+    implementation("org.springframework.boot:spring-boot-starter-activemq")
+    implementation("org.apache.activemq:activemq-broker")
+
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -48,6 +52,9 @@ dependencies {
 
     // OpenAPI Documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4'
+
+    // CSV parsing
+     implementation("com.opencsv:opencsv:5.12.0")
 
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

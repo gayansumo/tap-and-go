@@ -1,6 +1,11 @@
 spring:
   application:
     name: tap-and-go
+  activemq:
+    broker-url: tcp://localhost:61616   # was vm://localhost
+    user: admin                          # default ActiveMQ credentials
+    password: admin
+    in-memory: false                       # remove this line entirely
 
   datasource:
     url: jdbc:postgresql://localhost:5432/devdb
@@ -10,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
@@ -81,3 +86,19 @@ info:
     name: Tap & Go API
     version: 1.0.0
     owner: J&G Corp
+
+    ingestion:
+      batch-size: 100               # Rows per DB/queue batch
+      api-token: ${API_TOKEN:dev-token-change-in-prod}
+
+    messaging:
+      queues:
+        tap-events: tap.events.queue
+        dead-letter: ActiveMQ.DLQ
+      listener:
+        concurrency: 3-10           # Min 3, scales to 10 consumers
+        max-retries: 3
+
+    processing:
+      tap-expiry-minutes: 120            # 2 hour TTL for unmatched tap-ons
+      expiry-scheduler-delay-ms: 300000  # Run every 5 minutes
